@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE REBUILD — 16-Week Training Ledger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #15171B;
+      --surface: #1F232A;
+      --surface-2: #262C34;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #EDEAE2;
+      --text-muted: #9AA3AD;
+      --rust: #C1633D;
+      --rust-dim: #8C4A30;
+      --teal: #4F8C8A;
+      --teal-dim: #3A6664;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Professional Ambient Background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 20% 30%, rgba(193, 99, 61, 0.03), transparent 50%), radial-gradient(circle at 80% 70%, rgba(79, 140, 138, 0.03), transparent 50%);
+      animation: ambientShift 20s ease-in-out infinite alternate;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    @keyframes ambientShift {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      100% {
+        transform: rotate(2deg) scale(1.02);
+      }
+    }
+
+    a {
+      color: inherit;
+    }
+
+    /* ===== HERO & STATS ===== */
+    .hero {
+      padding: 80px 24px 32px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: var(--rust);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: inline-block;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 9vw, 96px);
+      line-height: 0.95;
+      margin: 0 0 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero h1 span {
+      color: var(--rust);
+    }
+
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: clamp(14px, 2vw, 16px);
+      max-width: 600px;
+      margin: 0 0 32px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .glass-panel {
+      background: rgba(31, 35, 42, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .glass-panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+      border-color: var(--border-hover);
+    }
+
+    .stat {
+      padding: 16px 20px;
+    }
+
+    .stat b {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      color: var(--rust);
+      margin-bottom: 4px;
+      line-height: 1;
+    }
+
+    .stat span {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    /* ===== TRACKER SYSTEM ===== */
+    .tracker-section {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .tracker-title {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--teal);
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .tracker-pct {
+      font-family: var(--font-display);
+      font-size: 24px;
+      color: var(--text);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal-dim), var(--teal));
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .week-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+
+    .week-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .week-pill {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(31, 35, 42, 0.8);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .week-pill.done {
+      background: rgba(79, 140, 138, 0.1);
+      border-color: rgba(79, 140, 138, 0.3);
+      opacity: 0.6;
+    }
+
+    .week-pill:hover {
+      border-color: var(--teal);
+      background: rgba(79, 140, 138, 0.15);
+      opacity: 1;
+    }
+
+    .week-pill-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .week-pill.done .week-pill-text {
+      color: var(--teal);
+      text-decoration: line-through;
+    }
+
+    .custom-check {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-hover);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .week-pill.done .custom-check {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .custom-check::after {
+      content: "✓";
+      color: var(--bg);
+      font-size: 12px;
+      font-weight: 900;
+      opacity: 0;
+      transform: scale(0);
+      transition: 0.2s;
+    }
+
+    .week-pill.done .custom-check::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ===== PHASE TABS ===== */
+    .phase-tabs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+
+    .phase-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--rust);
+      color: var(--bg);
+      border-color: var(--rust);
+      box-shadow: 0 4px 16px rgba(193, 99, 61, 0.3);
+      font-weight: 700;
+    }
+
+    /* Phase Done Styles */
+    .tab-btn.done {
+      border-color: rgba(79, 140, 138, 0.3);
+      color: var(--teal);
+      opacity: 0.7;
+    }
+
+    .tab-btn.done:hover {
+      border-color: var(--teal);
+      opacity: 1;
+    }
+
+    .tab-btn.done.active {
+      background: var(--teal);
+      color: var(--bg);
+      border-color: var(--teal);
+      box-shadow: 0 4px 16px rgba(79, 140, 138, 0.3);
+      opacity: 1;
+    }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(21, 23, 27, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-scroll {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 12px 24px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .nav-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav a {
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .nav a.active {
+      color: var(--bg);
+      background: var(--rust);
+      font-weight: 700;
+    }
+
+    /* ===== SECTION SHELL ===== */
+    section {
+      padding: 64px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .day-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .day-badge {
+      font-family: var(--font-display);
+      font-size: 26px;
+      background: var(--rust);
+      color: var(--bg);
+      padding: 4px 18px;
+      border-radius: 6px;
+      line-height: 1.2;
+    }
+
+    .day-meta {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+
+    .lede {
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 0 40px;
+      font-size: 15px;
+    }
+
+    /* ===== EXERCISE CARDS ===== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .card-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
+
+    .ex-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .ex-region {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--teal);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .ex-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 20px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .ex-progress {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .plate {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #D77A50, var(--rust) 60%, var(--rust-dim) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--rust-dim), inset 0 0 0 6px rgba(0, 0, 0, 0.2);
+      flex: 0 0 auto;
+      transition: transform 0.3s ease;
+    }
+
+    .ex-card:hover .plate {
+      transform: scale(1.05) rotate(5deg);
+    }
+
+    .plate b {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: #1a1a1a;
+      line-height: 1;
+    }
+
+    .plate span {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      color: #2a1a12;
+      text-transform: uppercase;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .arrow {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 16px;
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-mono);
+    }
+
+    .plate.target {
+      background: radial-gradient(circle at 35% 30%, #6FB0AE, var(--teal) 60%, var(--teal-dim) 100%);
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--teal-dim), inset 0 0 0 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .ex-card:hover .plate.target {
+      transform: scale(1.05) rotate(-5deg);
+    }
+
+    .ex-sets {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ex-sets b {
+      color: var(--rust);
+    }
+
+    .ex-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0;
+      margin-top: auto;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 64px 24px 96px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.05em;
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--rust);
+      color: var(--bg);
+      padding: 14px 24px;
+      border-radius: 30px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      bottom: 40px;
+      opacity: 1;
+    }
+
+    .toast.teal-toast {
+      background: var(--teal);
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding: 60px 20px 24px;
+      }
+
+      section {
+        padding: 48px 20px;
+      }
+
+      .day-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .ex-card {
+        padding: 20px;
+      }
+
+      .ex-progress {
+        padding: 12px;
+        gap: 8px;
+      }
+
+      .plate {
+        width: 50px;
+        height: 50px;
+      }
+
+      .toast {
+        width: 90%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">16-Week Return-to-Training Protocol</div>
+      <h1>THE <span>REBUILD</span></h1>
+      <p class="hero-sub">A 16-week dynamic ledger targeting full muscle recomp. Angles and mechanics shift every 4
+        weeks to force continuous adaptation. Progress cached locally.</p>
+
+      <div class="stat-row">
+        <div class="stat glass-panel"><b>80 → 70kg</b><span>Target Recomp</span></div>
+        <div class="stat glass-panel"><b>6</b><span>Days / Week</span></div>
+        <div class="stat glass-panel"><b>4</b><span>Phases</span></div>
+      </div>
+
+      <!-- MASTER TRACKER SYSTEM -->
+      <div class="tracker-section">
+        <div class="tracker-header">
+          <h2 class="tracker-title">Master Progress</h2>
+          <div class="tracker-pct" id="trackerPct">0%</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="week-scroll" id="weekScrollContainer">
+          <!-- JS will inject weeks here based on localStorage -->
+        </div>
+      </div>
+
+      <!-- Dynamic Phase Navigation -->
+      <div class="phase-tabs" id="phaseTabsContainer">
+        <!-- JS will inject dynamic phase tabs here based on completion -->
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-scroll" id="navScroll">
+      <a href="#day1">Day 1</a>
+      <a href="#day2">Day 2</a>
+      <a href="#day3">Day 3</a>
+      <a href="#day4">Day 4</a>
+      <a href="#day5">Day 5</a>
+      <a href="#day6">Day 6</a>
+      <a href="#legs">Leg Day</a>
+    </div>
+  </nav>
+
+  <!-- Container for dynamically injected phases -->
+  <main id="workout-container" class="fade-in"></main>
+
+  <footer>THE REBUILD · Local Storage Active · Progress Saved Intact</footer>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastMsg">Week 1 Set Finished!</div>
+
+  <script>
+    // --- 16-WEEK LOCAL STORAGE PROGRESS ENGINE ---
+    const STORAGE_KEY = 'rebuild_ledger_progress_v2';
+    let progressState = Array(16).fill(false);
+    let activePhaseId = "1";
+
+    const phasesDef = [
+      { id: "1", name: "Phase 1 (Wks 1-4)", weekIndices: [0, 1, 2, 3] },
+      { id: "2", name: "Phase 2 (Wks 5-8)", weekIndices: [4, 5, 6, 7] },
+      { id: "3", name: "Phase 3 (Wks 9-12)", weekIndices: [8, 9, 10, 11] },
+      { id: "4", name: "Phase 4 (Wks 13-16)", weekIndices: [12, 13, 14, 15] }
+    ];
+
+    // Load from Local Storage safely
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length === 16) {
+          progressState = parsed;
+        }
+      }
+    } catch (e) {
+      console.error("Local storage error:", e);
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progressState));
+      } catch (e) {
+        console.error("Could not save to local storage", e);
+      }
+    }
+
+    function renderPhaseTabs() {
+      const container = document.getElementById('phaseTabsContainer');
+      container.innerHTML = '';
+
+      // Evaluate which phases are entirely complete
+      let evaluatedPhases = phasesDef.map(p => {
+        const isDone = p.weekIndices.every(idx => progressState[idx]);
+        return { ...p, done: isDone };
+      });
+
+      // Sort: Undone phases stay left, Done phases move to the right
+      evaluatedPhases.sort((a, b) => {
+        if (a.done === b.done) return parseInt(a.id) - parseInt(b.id);
+        return a.done ? 1 : -1;
+      });
+
+      // Auto-select the first undone phase if nothing is active, or keep active
+      const currentlyActiveBtn = evaluatedPhases.find(p => p.id === activePhaseId);
+      if (!currentlyActiveBtn) activePhaseId = evaluatedPhases[0].id;
+
+      evaluatedPhases.forEach(p => {
+        const btn = document.createElement('button');
+        const isActive = (p.id === activePhaseId);
+        btn.className = `tab-btn ${isActive ? 'active' : ''} ${p.done ? 'done' : ''}`;
+        btn.dataset.phase = p.id;
+        btn.innerHTML = p.done ? `✓ ${p.name}` : p.name;
+
+        btn.addEventListener('click', () => {
+          activePhaseId = p.id;
+          renderPhaseTabs(); // Re-render tabs to update active class
+          renderPhase(p.id); // Render workout content
+        });
+
+        container.appendChild(btn);
+      });
+    }
+
+    function renderTracker() {
+      const container = document.getElementById('weekScrollContainer');
+      container.innerHTML = '';
+
+      // Create array of week objects, then sort: unchecked first, checked last
+      let weeks = progressState.map((isDone, index) => ({ week: index + 1, done: isDone }));
+
+      weeks.sort((a, b) => {
+        if (a.done === b.done) return a.week - b.week;
+        return a.done ? 1 : -1;
+      });
+
+      let completedCount = 0;
+
+      weeks.forEach(item => {
+        if (item.done) completedCount++;
+        const div = document.createElement('div');
+        div.className = `week-pill ${item.done ? 'done' : ''}`;
+        div.innerHTML = `
+          <div class="custom-check"></div>
+          <span class="week-pill-text">Week ${item.week}</span>
+        `;
+        div.onclick = () => toggleWeek(item.week - 1);
+        container.appendChild(div);
+      });
+
+      // Update Progress Bar & Percentage
+      const pct = Math.round((completedCount / 16) * 100);
+      document.getElementById('progressFill').style.width = `${pct}%`;
+      document.getElementById('trackerPct').innerText = `${pct}%`;
+
+      // Update Phase Tabs to reflect potential newly completed phases
+      renderPhaseTabs();
+    }
+
+    function toggleWeek(index) {
+      const isNowDone = !progressState[index];
+      progressState[index] = isNowDone;
+      saveProgress();
+
+      if (navigator.vibrate) navigator.vibrate(isNowDone ? [50, 50, 50] : 50);
+
+      // Determine if this tap just completed an entire phase
+      const phaseNum = Math.floor(index / 4);
+      const phaseIndices = phasesDef[phaseNum].weekIndices;
+      const phaseJustCompleted = isNowDone && phaseIndices.every(idx => progressState[idx]);
+
+      renderTracker();
+
+      if (phaseJustCompleted) {
+        showToast(`Phase ${phaseNum + 1} Fully Completed!`, true);
+      } else if (isNowDone) {
+        showToast(`Week ${index + 1} Set Finished!`, false);
+      }
+    }
+
+    let toastTimeout;
+    function showToast(msg, isPhaseCompleted) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = msg;
+
+      if (isPhaseCompleted) {
+        toast.classList.add('teal-toast');
+      } else {
+        toast.classList.remove('teal-toast');
+      }
+
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    // --- 16-WEEK PROGRESSION DATA ENGINE ---
+    // Zero pushups, zero pullups, heavy focus on hypertrophy, cables, and machine safety.
+    const planData = {
+      1: {
+        theme: "Foundation & Volume (DB Bias)",
+        days: [
+          {
+            id: "day1", title: "DAY 1", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Mid Chest", name: "Flat Dumbbell Press", w1: "10kg", w2: "17kg", sets: "3 sets × 10 reps", note: "Working load for reps, no max attempts." },
+              { reg: "Upper Chest", name: "Incline Dumbbell Press", w1: "8kg", w2: "13kg", sets: "3 sets × 10 reps", note: "Bench at 30-45°." },
+              { reg: "Lower Chest", name: "Low-to-High Cable Fly", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Cross hands at the top." },
+              { reg: "Biceps", name: "Standing Dumbbell Curl", w1: "6kg", w2: "11kg", sets: "3 sets × 10 reps", note: "No swinging momentum." },
+              { reg: "Inner Forearm", name: "Seated Wrist Curl", w1: "5kg", w2: "10kg", sets: "3 sets × 15 reps", note: "Palms facing up. Squeeze and slow release." }
+            ]
+          },
+          {
+            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
+              { reg: "Upper Back", name: "Face Pull (Cable)", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Pull to eye level, elbows high." },
+              { reg: "Mid Back", name: "T-Bar Row (Machine)", w1: "12kg", w2: "22kg", sets: "3 sets × 10 reps", note: "Chest supported to protect lower back." },
+              { reg: "Lats", name: "Wide-Grip Lat Pulldown", w1: "25kg", w2: "40kg", sets: "3 sets × 10 reps", note: "Pull to upper chest." },
+              { reg: "Triceps", name: "Cable Tricep Pushdown", w1: "12kg", w2: "22kg", sets: "3 sets × 10 reps", note: "Elbows pinned to sides." },
+              { reg: "Triceps", name: "Overhead DB Extension", w1: "8kg", w2: "15kg", sets: "2 sets × 12 reps", note: "Full stretch behind the head." }
+            ]
+          },
+          {
+            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Smith Machine Press", w1: "5kg", w2: "11kg", sets: "3 sets × 10 reps", note: "Seated to protect lower back." },
+              { reg: "Side Delt", name: "DB Lateral Raise", w1: "4kg", w2: "8kg", sets: "3 sets × 15 reps", note: "The primary builder for physical width." },
+              { reg: "Rear Delt", name: "Bent-Over Rear Fly", w1: "4kg", w2: "7kg", sets: "3 sets × 15 reps", note: "Hinge at hips, flat back." },
+              { reg: "Core", name: "Side Plank", w1: "15s", w2: "40s", sets: "2 sets × to target", note: "No crunching motion—safe for cramping." },
+              { reg: "Core", name: "Standard Plank", w1: "25s", w2: "75s", sets: "2 sets × to target", note: "Straight line hips to shoulders." }
+            ]
+          },
+          {
+            id: "day4", title: "DAY 4", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Mid Chest", name: "Smith Machine Flat Press", w1: "5kg", w2: "13kg", sets: "3 sets × 10 reps", note: "Fixed bar path allows pushing closer to failure." },
+              { reg: "Upper Chest", name: "Pec Deck Fly", w1: "15kg", w2: "28kg", sets: "3 sets × 12 reps", note: "Full stretch, squeeze at front." },
+              { reg: "Lower Chest", name: "Cable Crossover (High-Low)", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Squeeze, don't yank." },
+              { reg: "Biceps", name: "Cable Rope Curl", w1: "10kg", w2: "20kg", sets: "3 sets × 10 reps", note: "Constant tension." },
+              { reg: "Outer Forearm", name: "Reverse Cable Curl", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Overhand grip. Hits forearms and lower bicep." }
+            ]
+          },
+          {
+            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
+              { reg: "Upper Back", name: "Reverse Pec Deck", w1: "12kg", w2: "22kg", sets: "3 sets × 15 reps", note: "Chest against pad, lead with elbows." },
+              { reg: "Mid Back", name: "One-Arm Machine Row", w1: "14kg", w2: "23kg", sets: "3 sets × 10 reps", note: "Pull elbow past ribs, no torso twist." },
+              { reg: "Lower Back", name: "Back Extension", w1: "BW", w2: "7.5kg", sets: "2 sets × 12 reps", note: "Targeting erectors. Don't hyperextend." },
+              { reg: "Triceps", name: "Close-Grip Smith Press", w1: "5kg", w2: "11kg", sets: "3 sets × 10 reps", note: "Hands shoulder-width, elbows tucked." },
+              { reg: "Triceps", name: "Bench Dip", w1: "BW", w2: "15 reps", sets: "2 sets × 10 reps", note: "Elevate feet as it gets easy." }
+            ]
+          },
+          {
+            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Seated DB Shoulder Press", w1: "7kg", w2: "13kg", sets: "3 sets × 10 reps", note: "More stabilizer demand than Smith." },
+              { reg: "Side Delt", name: "Cable Lateral Raise", w1: "4kg", w2: "8kg", sets: "3 sets × 15 reps", note: "Constant tension. Do each arm separately." },
+              { reg: "Rear Delt", name: "Cable Reverse Fly", w1: "5kg", w2: "9kg", sets: "3 sets × 15 reps", note: "Cross cables in front, pull in arc." },
+              { reg: "Core", name: "Pallof Press", w1: "10kg", w2: "20kg", sets: "2 sets × 10 reps", note: "Press straight out and hold. Resist twist." },
+              { reg: "Core", name: "Bird Dog", w1: "BW", w2: "20 reps", sets: "2 sets × 12 reps", note: "Extend opposite arm and leg." }
+            ]
+          }
+        ]
+      },
+      2: {
+        theme: "Mechanical Tension (Machine Bias)",
+        days: [
+          {
+            id: "day1", title: "DAY 1", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Mid Chest", name: "Smith Machine Flat Press", w1: "10kg", w2: "20kg", sets: "4 sets × 8 reps", note: "Heavier weight, lower reps this phase." },
+              { reg: "Upper Chest", name: "Incline Cable Fly", w1: "5kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Bench at 30° between cables." },
+              { reg: "Lower Chest", name: "Decline Dumbbell Press", w1: "8kg", w2: "16kg", sets: "3 sets × 10 reps", note: "Shift angle to target lower pecs." },
+              { reg: "Biceps", name: "Preacher Curl (Machine)", w1: "10kg", w2: "20kg", sets: "3 sets × 10 reps", note: "Strict isolation, no cheating." },
+              { reg: "Inner Forearm", name: "Behind-Back Wrist Curl", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Use Smith machine bar behind back." }
+            ]
+          },
+          {
+            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "V-Bar Pulldown", w1: "30kg", w2: "45kg", sets: "3 sets × 10 reps", note: "Neutral grip targets lats deeper." },
+              { reg: "Mid Back", name: "Seated Cable Row", w1: "25kg", w2: "40kg", sets: "3 sets × 10 reps", note: "Keep back straight, pull to belly button." },
+              { reg: "Upper Back", name: "Straight-Arm Pulldown", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Isolate lats without biceps." },
+              { reg: "Triceps", name: "V-Bar Pushdown", w1: "15kg", w2: "25kg", sets: "3 sets × 10 reps", note: "Flairs outer tricep head." },
+              { reg: "Triceps", name: "Skullcrushers (EZ Bar)", w1: "10kg", w2: "20kg", sets: "3 sets × 10 reps", note: "Lower to forehead, strict form." }
+            ]
+          },
+          {
+            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Arnold Press", w1: "8kg", w2: "14kg", sets: "3 sets × 10 reps", note: "Twist at bottom increases range of motion." },
+              { reg: "Side Delt", name: "Lean-Away Cable Lateral", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Hold a pole, lean out to increase tension arc." },
+              { reg: "Rear Delt", name: "High-Angle Rope Row", w1: "15kg", w2: "25kg", sets: "3 sets × 12 reps", note: "Pull to neck level, flare elbows." },
+              { reg: "Core", name: "Weighted Plank", w1: "BW", w2: "10kg", sets: "3 sets × 45s", note: "Add a plate to your back." },
+              { reg: "Core", name: "Dead Bug", w1: "BW", w2: "20 reps", sets: "3 sets × 12 reps", note: "Opposite arm/leg extension on back." }
+            ]
+          },
+          {
+            id: "day4", title: "DAY 4", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Mid Chest", name: "Flat Machine Press", w1: "20kg", w2: "40kg", sets: "3 sets × 10 reps", note: "Converging chest press if available." },
+              { reg: "Upper Chest", name: "Incline Smith Press", w1: "10kg", w2: "20kg", sets: "3 sets × 10 reps", note: "Stop 1 inch above chest." },
+              { reg: "Mid Chest", name: "Pec Deck (Drop Sets)", w1: "25kg", w2: "40kg", sets: "3 sets × 10 + 5", note: "On last set, drop weight and do 5 more." },
+              { reg: "Biceps", name: "Cross-Body Hammer Curl", w1: "8kg", w2: "14kg", sets: "3 sets × 10 reps", note: "Curl toward opposite shoulder." },
+              { reg: "Outer Forearm", name: "Zottman Curls", w1: "6kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Curl up normal, rotate palms down, lower slowly." }
+            ]
+          },
+          {
+            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "Single-Arm Cable Pulldown", w1: "15kg", w2: "25kg", sets: "3 sets × 10 reps", note: "Isolate each lat. Pull elbow to hip." },
+              { reg: "Mid Back", name: "Chest-Supported DB Row", w1: "14kg", w2: "24kg", sets: "3 sets × 10 reps", note: "Lay face down on 30° incline bench." },
+              { reg: "Upper Back", name: "Face Pull", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Keep posture tight." },
+              { reg: "Triceps", name: "Rope Overhead Extension", w1: "10kg", w2: "20kg", sets: "3 sets × 12 reps", note: "Uses cable, constant tension at top." },
+              { reg: "Triceps", name: "Single-Arm Reverse Pushdown", w1: "5kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Underhand grip, isolates medial head." }
+            ]
+          },
+          {
+            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Machine Shoulder Press", w1: "15kg", w2: "30kg", sets: "3 sets × 10 reps", note: "Allows for maximum safe loading." },
+              { reg: "Side Delt", name: "Heavy DB Lateral Raise", w1: "6kg", w2: "12kg", sets: "4 sets × 10 reps", note: "Slight cheat is okay on last reps this phase." },
+              { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Squeeze shoulder blades together." },
+              { reg: "Core", name: "Cable Woodchoppers", w1: "10kg", w2: "20kg", sets: "3 sets × 12 reps", note: "High to low rotational control." },
+              { reg: "Core", name: "Hollow Body Hold", w1: "20s", w2: "45s", sets: "3 sets × to target", note: "Lower back pressed hard into floor." }
+            ]
+          }
+        ]
+      },
+      3: {
+        theme: "Pre-Exhaustion & Isolation (Cable Bias)",
+        days: [
+          {
+            id: "day1", title: "DAY 1", meta: "Chest + Biceps", exercises: [
+              { reg: "Mid Chest", name: "Cable Crossover", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Pre-exhaust pecs before pressing." },
+              { reg: "Mid Chest", name: "Flat DB Press", w1: "12kg", w2: "20kg", sets: "3 sets × 8 reps", note: "Pecs pre-fatigued, elbows tucked." },
+              { reg: "Upper Chest", name: "Incline Machine Press", w1: "15kg", w2: "30kg", sets: "3 sets × 10 reps", note: "Squeeze top contraction." },
+              { reg: "Biceps", name: "Incline DB Curl", w1: "6kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Huge stretch on long head." },
+              { reg: "Inner Forearm", name: "Seated Wrist Curl", w1: "7kg", w2: "12kg", sets: "3 sets × 15 reps", note: "Slow negatives." }
+            ]
+          },
+          {
+            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "Straight-Arm Pulldown", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Pre-exhaust lats." },
+              { reg: "Mid Back", name: "T-Bar Row", w1: "15kg", w2: "30kg", sets: "3 sets × 8 reps", note: "Heavy sets, chest supported." },
+              { reg: "Upper Back", name: "Wide-Grip Seated Row", w1: "20kg", w2: "35kg", sets: "3 sets × 12 reps", note: "Pull wide to hit upper back." },
+              { reg: "Triceps", name: "Rope Pushdown", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Pre-exhaust triceps." },
+              { reg: "Triceps", name: "Close-Grip Smith Press", w1: "10kg", w2: "20kg", sets: "3 sets × 8 reps", note: "Heavy compound closer." }
+            ]
+          },
+          {
+            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+              { reg: "Side Delt", name: "DB Lateral Raise", w1: "5kg", w2: "10kg", sets: "4 sets × 15 reps", note: "Pre-exhaust side delts." },
+              { reg: "Front Delt", name: "Seated DB Press", w1: "10kg", w2: "16kg", sets: "3 sets × 8 reps", note: "Heavy press." },
+              { reg: "Rear Delt", name: "Bent-Over Cable Fly", w1: "5kg", w2: "10kg", sets: "3 sets × 15 reps", note: "Cables give constant tension." },
+              { reg: "Core", name: "Pallof Press", w1: "15kg", w2: "25kg", sets: "3 sets × 12 reps", note: "Resist rotation." },
+              { reg: "Core", name: "Plank with Taps", w1: "10 reps", w2: "20 reps", sets: "3 sets", note: "Keep hips entirely still." }
+            ]
+          },
+          {
+            id: "day4", title: "DAY 4", meta: "Chest + Biceps", exercises: [
+              { reg: "Upper Chest", name: "Low-to-High Cable Fly", w1: "7kg", w2: "15kg", sets: "3 sets × 15 reps", note: "Pre-exhaust upper pecs." },
+              { reg: "Upper Chest", name: "Incline Smith Press", w1: "10kg", w2: "22kg", sets: "3 sets × 8 reps", note: "Heavy compound." },
+              { reg: "Lower Chest", name: "Decline Cable Fly", w1: "10kg", w2: "20kg", sets: "3 sets × 12 reps", note: "Target lower pec sweep." },
+              { reg: "Biceps", name: "Cable EZ-Bar Curl", w1: "15kg", w2: "30kg", sets: "3 sets × 10 reps", note: "Heavy strict curls." },
+              { reg: "Outer Forearm", name: "Reverse Cable Curl", w1: "12kg", w2: "22kg", sets: "3 sets × 12 reps", note: "Pronated grip." }
+            ]
+          },
+          {
+            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "Wide-Grip Pulldown", w1: "30kg", w2: "50kg", sets: "3 sets × 10 reps", note: "Heavy width focus." },
+              { reg: "Mid Back", name: "One-Arm DB Row", w1: "16kg", w2: "26kg", sets: "3 sets × 8 reps", note: "Heavy thickness focus." },
+              { reg: "Lower Back", name: "Back Extension", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Weighted." },
+              { reg: "Triceps", name: "Cross-Body Cable Ext", w1: "5kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Isolate each arm perfectly." },
+              { reg: "Triceps", name: "Bench Dip", w1: "BW", w2: "20 reps", sets: "3 sets × to failure", note: "Burnout." }
+            ]
+          },
+          {
+            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+              { reg: "Side Delt", name: "Cable Lateral Raise", w1: "5kg", w2: "12kg", sets: "4 sets × 12 reps", note: "Behind the back variation." },
+              { reg: "Front Delt", name: "Machine Press", w1: "20kg", w2: "35kg", sets: "3 sets × 8 reps", note: "Heavy finishing press." },
+              { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "20kg", w2: "30kg", sets: "3 sets × 12 reps", note: "Strict form." },
+              { reg: "Core", name: "Side Plank", w1: "30s", w2: "60s", sets: "3 sets", note: "Weighted if possible." },
+              { reg: "Core", name: "Bird Dog", w1: "15 reps", w2: "25 reps", sets: "3 sets", note: "Perfect stability." }
+            ]
+          }
+        ]
+      },
+      4: {
+        theme: "Density & Peak Form (Supersets)",
+        days: [
+          {
+            id: "day1", title: "DAY 1", meta: "Chest + Biceps", exercises: [
+              { reg: "Chest", name: "DB Flat Press + Flat Fly", w1: "16/8kg", w2: "22/12kg", sets: "3 sets × 8/10 reps", note: "Superset. Press, immediately drop to flys." },
+              { reg: "Upper Chest", name: "Incline Smith Press", w1: "15kg", w2: "25kg", sets: "3 sets × 10 reps", note: "Controlled negative." },
+              { reg: "Lower Chest", name: "Cable Crossover", w1: "10kg", w2: "22kg", sets: "3 sets × 15 reps", note: "Squeeze and hold 1 sec." },
+              { reg: "Biceps", name: "Standing DB Curl + Hammer", w1: "10kg", w2: "16kg", sets: "3 sets × 8/8 reps", note: "Superset. Brutal arm pump." },
+              { reg: "Forearm", name: "Wrist Roller / Hold", w1: "10kg", w2: "20kg", sets: "3 sets × 30s", note: "Static grip strength." }
+            ]
+          },
+          {
+            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "V-Bar Pulldown + Straight-Arm", w1: "40/15kg", w2: "55/25kg", sets: "3 sets × 8/12 reps", note: "Superset. Lat destruction." },
+              { reg: "Mid Back", name: "Seated Cable Row", w1: "35kg", w2: "50kg", sets: "3 sets × 10 reps", note: "Heavy squeeze." },
+              { reg: "Upper Back", name: "Face Pull", w1: "20kg", w2: "30kg", sets: "3 sets × 15 reps", note: "Posture integrity." },
+              { reg: "Triceps", name: "Rope Pushdown + Overhead", w1: "20kg", w2: "30kg", sets: "3 sets × 10/10 reps", note: "Superset. Double rope work." },
+              { reg: "Triceps", name: "Bench Dip", w1: "BW", w2: "Plate", sets: "3 sets × 15 reps", note: "Weighted if possible." }
+            ]
+          },
+          {
+            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+              { reg: "Shoulders", name: "DB Lateral + DB Front Raise", w1: "8kg", w2: "12kg", sets: "3 sets × 10/10 reps", note: "Superset. Cap the delts." },
+              { reg: "Front Delt", name: "Smith Machine Press", w1: "15kg", w2: "25kg", sets: "3 sets × 8 reps", note: "Heavy." },
+              { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "25kg", w2: "35kg", sets: "3 sets × 12 reps", note: "Squeeze." },
+              { reg: "Core", name: "Weighted Plank", w1: "10kg", w2: "20kg", sets: "3 sets × 45s", note: "Heavy static hold." },
+              { reg: "Core", name: "Dead Bug", w1: "20 reps", w2: "30 reps", sets: "3 sets", note: "Core control." }
+            ]
+          },
+          {
+            id: "day4", title: "DAY 4", meta: "Chest + Biceps", exercises: [
+              { reg: "Upper Chest", name: "Incline DB Press + Fly", w1: "14/8kg", w2: "20/12kg", sets: "3 sets × 8/10 reps", note: "Superset. Upper pec destruction." },
+              { reg: "Mid Chest", name: "Machine Chest Press", w1: "30kg", w2: "50kg", sets: "3 sets × 10 reps", note: "Max safe load." },
+              { reg: "Lower Chest", name: "High-to-Low Cable", w1: "12kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Burnout." },
+              { reg: "Biceps", name: "Preacher Curl + Reverse", w1: "15kg", w2: "25kg", sets: "3 sets × 10/10 reps", note: "Superset. Bicep and forearm tie-in." },
+              { reg: "Forearm", name: "Behind-Back Wrist Curl", w1: "20kg", w2: "30kg", sets: "3 sets × 15 reps", note: "Heavy flexors." }
+            ]
+          },
+          {
+            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
+              { reg: "Mid Back", name: "T-Bar Row + DB Pullover", w1: "30/16kg", w2: "45/24kg", sets: "3 sets × 8/12 reps", note: "Superset. Thickness and stretch." },
+              { reg: "Lats", name: "Wide-Grip Pulldown", w1: "40kg", w2: "60kg", sets: "3 sets × 10 reps", note: "Max width." },
+              { reg: "Lower Back", name: "Back Extension", w1: "10kg", w2: "15kg", sets: "3 sets × 15 reps", note: "Strong erectors." },
+              { reg: "Triceps", name: "Skullcrushers + Close-Grip", w1: "15kg", w2: "25kg", sets: "3 sets × 8/8 reps", note: "Superset. Same EZ bar, transition instantly." },
+              { reg: "Triceps", name: "Single-Arm Cable Ext", w1: "8kg", w2: "15kg", sets: "3 sets × 12 reps", note: "Detail work." }
+            ]
+          },
+          {
+            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+              { reg: "Shoulders", name: "Machine Press + Lat Raise", w1: "30/6kg", w2: "45/10kg", sets: "3 sets × 8/12 reps", note: "Superset. Final boulder shoulder push." },
+              { reg: "Rear Delt", name: "Bent-Over Cable Fly", w1: "8kg", w2: "15kg", sets: "3 sets × 15 reps", note: "High volume." },
+              { reg: "Core", name: "Pallof Press", w1: "20kg", w2: "30kg", sets: "3 sets × 12 reps", note: "Anti-rotation." },
+              { reg: "Core", name: "Hollow Body Hold", w1: "30s", w2: "60s", sets: "3 sets", note: "Gymnastic core strength." },
+              { reg: "Cardio", name: "Incline Treadmill Sprints", w1: "Lvl 1", w2: "Lvl 5", sets: "15 mins", note: "Finish strong." }
+            ]
+          }
+        ]
+      }
+    };
+
+    const wContainer = document.getElementById('workout-container');
+
+    const legDayHTML = `
+      <section id="legs">
+        <div class="section-inner">
+          <div class="day-head"><span class="day-badge" style="background:var(--teal); color:var(--bg);">LEG DAY</span><span class="day-meta">Light — 2–3× per Month</span></div>
+          <p class="lede">Event work is all standing, so legs stay in maintenance mode. Swap this in for Day 6 roughly every 10–12 days.</p>
+          <div class="card-grid">
+            <div class="ex-card glass-panel" style="border-color: rgba(79, 140, 138, 0.3);">
+              <div class="ex-region">Quads + Glutes</div><div class="ex-name">Leg Press</div>
+              <div class="ex-sets"><b>3 sets</b> × 12 reps</div><p class="ex-note">Feet mid-platform, controlled.</p>
+            </div>
+            <div class="ex-card glass-panel" style="border-color: rgba(79, 140, 138, 0.3);">
+              <div class="ex-region">Hamstrings</div><div class="ex-name">Leg Curl (Machine)</div>
+              <div class="ex-sets"><b>3 sets</b> × 12 reps</div><p class="ex-note">Slow 3s negative.</p>
+            </div>
+            <div class="ex-card glass-panel" style="border-color: rgba(79, 140, 138, 0.3);">
+              <div class="ex-region">Quads</div><div class="ex-name">Leg Extension</div>
+              <div class="ex-sets"><b>3 sets</b> × 12 reps</div><p class="ex-note">Light weight maintenance.</p>
+            </div>
+            <div class="ex-card glass-panel" style="border-color: rgba(79, 140, 138, 0.3);">
+              <div class="ex-region">Calves</div><div class="ex-name">Standing Calf Raise</div>
+              <div class="ex-sets"><b>3 sets</b> × 15 reps</div><p class="ex-note">Full stretch at bottom.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+
+    function renderPhase(phaseNum) {
+      wContainer.classList.remove('fade-in');
+      void wContainer.offsetWidth;
+
+      const phase = planData[phaseNum];
+      let html = `<div style="text-align:center; padding: 20px 24px 0;">
+                    <p style="color:var(--teal); font-family:var(--font-mono); font-size:14px; margin:0; text-transform:uppercase; letter-spacing:0.1em;">Current Focus</p>
+                    <h2 style="font-family:var(--font-display); font-size:32px; margin:4px 0 0;">${phase.theme}</h2>
+                  </div>`;
+
+      phase.days.forEach(day => {
+        let cardsHTML = '';
+        day.exercises.forEach(ex => {
+          let borderColor = '';
+          if (ex.reg.includes('Forearm')) borderColor = 'border-color: rgba(79, 140, 138, 0.3);';
+
+          cardsHTML += `
+            <div class="ex-card glass-panel" style="${borderColor}">
+              <div class="ex-region">${ex.reg}</div>
+              <div class="ex-name">${ex.name}</div>
+              <div class="ex-progress">
+                <div class="plate"><b>${ex.w1.replace(/[^0-9./]/g, '') || ex.w1}</b><span>${ex.w1.replace(/[0-9./]/g, '') || 'start'}</span></div>
+                <span class="arrow">→</span>
+                <div class="plate target"><b>${ex.w2.replace(/[^0-9./]/g, '') || ex.w2}</b><span>${ex.w2.replace(/[0-9./]/g, '') || 'target'}</span></div>
+              </div>
+              <div class="ex-sets"><b>${ex.sets.split('×')[0]}</b> ${ex.sets.includes('×') ? '× ' + ex.sets.split('×')[1] : ''}</div>
+              <p class="ex-note">${ex.note}</p>
+            </div>
+          `;
+        });
+
+        html += `
+          <section id="${day.id}">
+            <div class="section-inner">
+              <div class="day-head"><span class="day-badge">${day.title}</span><span class="day-meta">${day.meta}</span></div>
+              <p class="lede">${day.exercises.length} exercises · 30m cardio · Week ${((phaseNum - 1) * 4) + 1} to ${phaseNum * 4}</p>
+              <div class="card-grid">
+                ${cardsHTML}
+              </div>
+            </div>
+          </section>
+        `;
+      });
+
+      html += legDayHTML;
+      wContainer.innerHTML = html;
+      wContainer.classList.add('fade-in');
+
+      initScrollSpy();
+    }
+
+    function initScrollSpy() {
+      const links = document.querySelectorAll('.nav a');
+      const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = '#' + entry.target.id;
+            links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === id));
+            const activeLink = document.querySelector('.nav a[href="' + id + '"]');
+            if (activeLink) activeLink.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      sections.forEach(s => { if (s) io.observe(s); });
+    }
+
+    // Run Initialization
+    renderTracker();
+    renderPhase(activePhaseId);
+  </script>
+</body>
+
+</html>
