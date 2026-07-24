@@ -871,65 +871,6 @@
     // Zero pushups, zero pullups, heavy focus on hypertrophy, cables, and machine safety.
     const planData = {
       1: {
-        theme: "Foundation & Volume (DB Bias)",
-        days: [
-          {
-            id: "day1", title: "DAY 1", meta: "Chest + Biceps + Forearms", exercises: [
-              { reg: "Mid Chest", name: "Flat Dumbbell Press", w1: "10kg", w2: "17kg", sets: "3 sets × 10 reps", note: "Working load for reps, no max attempts." },
-              { reg: "Upper Chest", name: "Incline Dumbbell Press", w1: "8kg", w2: "13kg", sets: "3 sets × 10 reps", note: "Bench at 30-45°." },
-              { reg: "Lower Chest", name: "Low-to-High Cable Fly", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Cross hands at the top." },
-              { reg: "Biceps", name: "Standing Dumbbell Curl", w1: "6kg", w2: "11kg", sets: "3 sets × 10 reps", note: "No swinging momentum." },
-              { reg: "Inner Forearm", name: "Seated Wrist Curl", w1: "5kg", w2: "10kg", sets: "3 sets × 15 reps", note: "Palms facing up. Squeeze and slow release." }
-            ]
-          },
-          {
-            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
-              { reg: "Upper Back", name: "Face Pull (Cable)", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Pull to eye level, elbows high." },
-              { reg: "Mid Back", name: "T-Bar Row (Machine)", w1: "12kg", w2: "22kg", sets: "3 sets × 10 reps", note: "Chest supported to protect lower back." },
-              { reg: "Lats", name: "Wide-Grip Lat Pulldown", w1: "25kg", w2: "40kg", sets: "3 sets × 10 reps", note: "Pull to upper chest." },
-              { reg: "Triceps", name: "Cable Tricep Pushdown", w1: "12kg", w2: "22kg", sets: "3 sets × 10 reps", note: "Elbows pinned to sides." },
-              { reg: "Triceps", name: "Overhead DB Extension", w1: "8kg", w2: "15kg", sets: "2 sets × 12 reps", note: "Full stretch behind the head." }
-            ]
-          },
-          {
-            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
-              { reg: "Front Delt", name: "Smith Machine Press", w1: "5kg", w2: "11kg", sets: "3 sets × 10 reps", note: "Seated to protect lower back." },
-              { reg: "Side Delt", name: "DB Lateral Raise", w1: "4kg", w2: "8kg", sets: "3 sets × 15 reps", note: "The primary builder for physical width." },
-              { reg: "Rear Delt", name: "Bent-Over Rear Fly", w1: "4kg", w2: "7kg", sets: "3 sets × 15 reps", note: "Hinge at hips, flat back." },
-              { reg: "Core", name: "Side Plank", w1: "15s", w2: "40s", sets: "2 sets × to target", note: "No crunching motion—safe for cramping." },
-              { reg: "Core", name: "Standard Plank", w1: "25s", w2: "75s", sets: "2 sets × to target", note: "Straight line hips to shoulders." }
-            ]
-          },
-          {
-            id: "day4", title: "DAY 4", meta: "Chest + Biceps + Forearms", exercises: [
-              { reg: "Mid Chest", name: "Smith Machine Flat Press", w1: "5kg", w2: "13kg", sets: "3 sets × 10 reps", note: "Fixed bar path allows pushing closer to failure." },
-              { reg: "Upper Chest", name: "Pec Deck Fly", w1: "15kg", w2: "28kg", sets: "3 sets × 12 reps", note: "Full stretch, squeeze at front." },
-              { reg: "Lower Chest", name: "Cable Crossover (High-Low)", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Squeeze, don't yank." },
-              { reg: "Biceps", name: "Cable Rope Curl", w1: "10kg", w2: "20kg", sets: "3 sets × 10 reps", note: "Constant tension." },
-              { reg: "Outer Forearm", name: "Reverse Cable Curl", w1: "10kg", w2: "20kg", sets: "3 sets × 15 reps", note: "Overhand grip. Hits forearms and lower bicep." }
-            ]
-          },
-          {
-            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
-              { reg: "Upper Back", name: "Reverse Pec Deck", w1: "12kg", w2: "22kg", sets: "3 sets × 15 reps", note: "Chest against pad, lead with elbows." },
-              { reg: "Mid Back", name: "One-Arm Machine Row", w1: "14kg", w2: "23kg", sets: "3 sets × 10 reps", note: "Pull elbow past ribs, no torso twist." },
-              { reg: "Lower Back", name: "Back Extension", w1: "BW", w2: "7.5kg", sets: "2 sets × 12 reps", note: "Targeting erectors. Don't hyperextend." },
-              { reg: "Triceps", name: "Close-Grip Smith Press", w1: "5kg", w2: "11kg", sets: "3 sets × 10 reps", note: "Hands shoulder-width, elbows tucked." },
-              { reg: "Triceps", name: "Bench Dip", w1: "BW", w2: "15 reps", sets: "2 sets × 10 reps", note: "Elevate feet as it gets easy." }
-            ]
-          },
-          {
-            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
-              { reg: "Front Delt", name: "Seated DB Shoulder Press", w1: "7kg", w2: "13kg", sets: "3 sets × 10 reps", note: "More stabilizer demand than Smith." },
-              { reg: "Side Delt", name: "Cable Lateral Raise", w1: "4kg", w2: "8kg", sets: "3 sets × 15 reps", note: "Constant tension. Do each arm separately." },
-              { reg: "Rear Delt", name: "Cable Reverse Fly", w1: "5kg", w2: "9kg", sets: "3 sets × 15 reps", note: "Cross cables in front, pull in arc." },
-              { reg: "Core", name: "Pallof Press", w1: "10kg", w2: "20kg", sets: "2 sets × 10 reps", note: "Press straight out and hold. Resist twist." },
-              { reg: "Core", name: "Bird Dog", w1: "BW", w2: "20 reps", sets: "2 sets × 12 reps", note: "Extend opposite arm and leg." }
-            ]
-          }
-        ]
-      },
-      2: {
         theme: "Mechanical Tension (Machine Bias)",
         days: [
           {
@@ -988,7 +929,7 @@
           }
         ]
       },
-      3: {
+      2: {
         theme: "Pre-Exhaustion & Isolation (Cable Bias)",
         days: [
           {
@@ -1047,7 +988,7 @@
           }
         ]
       },
-      4: {
+      3: {
         theme: "Density & Peak Form (Supersets)",
         days: [
           {
@@ -1102,6 +1043,65 @@
               { reg: "Core", name: "Pallof Press", w1: "20kg", w2: "30kg", sets: "3 sets × 12 reps", note: "Anti-rotation." },
               { reg: "Core", name: "Hollow Body Hold", w1: "30s", w2: "60s", sets: "3 sets", note: "Gymnastic core strength." },
               { reg: "Cardio", name: "Incline Treadmill Sprints", w1: "Lvl 1", w2: "Lvl 5", sets: "15 mins", note: "Finish strong." }
+            ]
+          }
+        ]
+      },
+      4: {
+        theme: "Strength Consolidation & Compound Integration",
+        days: [
+          {
+            id: "day1", title: "DAY 1", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Mid Chest", name: "Barbell Flat Bench Press", w1: "35kg", w2: "50kg", sets: "4 sets × 6 reps", note: "New compound for this phase — get a spot or use safety bars for your first working set." },
+              { reg: "Upper Chest", name: "Incline Dumbbell Press", w1: "18kg", w2: "24kg", sets: "3 sets × 8 reps", note: "Bench at 30-45°, controlled 2-second negative." },
+              { reg: "Chest (Bodyweight)", name: "Weighted Push-Up", w1: "BW", w2: "Plate", sets: "3 sets × 12 reps", note: "Bringing pushups back in now that you've built the base for them. Full range, chest to floor." },
+              { reg: "Biceps", name: "Barbell Curl", w1: "22kg", w2: "32kg", sets: "3 sets × 8 reps", note: "Strict form, no swinging momentum." },
+              { reg: "Forearm", name: "Farmer's Carry", w1: "20kg", w2: "32kg", sets: "3 sets × 30m walk", note: "Per hand. Builds grip and core bracing." }
+            ]
+          },
+          {
+            id: "day2", title: "DAY 2", meta: "Back + Triceps", exercises: [
+              { reg: "Lats (Bodyweight)", name: "Assisted Pull-Up", w1: "15kg assist", w2: "5kg assist", sets: "3 sets × 8 reps", note: "Second new compound. Assist weight goes DOWN as you get stronger — that's the progress here, even though the number falls." },
+              { reg: "Mid Back", name: "Barbell Bent-Over Row", w1: "35kg", w2: "50kg", sets: "4 sets × 8 reps", note: "Flat back, pull to lower ribs, no jerking the weight up." },
+              { reg: "Upper Back", name: "Face Pull (Cable)", w1: "25kg", w2: "35kg", sets: "3 sets × 15 reps", note: "Keep shoulders healthy at this heavier load — pull to eye level." },
+              { reg: "Triceps", name: "Close-Grip Bench Press", w1: "30kg", w2: "42kg", sets: "3 sets × 8 reps", note: "Elbows tucked, controlled bar path." },
+              { reg: "Triceps", name: "Overhead Rope Extension", w1: "15kg", w2: "22kg", sets: "2 sets × 12 reps", note: "Full stretch behind the head." }
+            ]
+          },
+          {
+            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Standing Barbell Overhead Press", w1: "22kg", w2: "32kg", sets: "4 sets × 6 reps", note: "Brace your core hard, press straight overhead — not forward." },
+              { reg: "Side Delt", name: "DB Lateral Raise", w1: "10kg", w2: "14kg", sets: "3 sets × 15 reps", note: "Lead with elbows, no swinging." },
+              { reg: "Rear Delt", name: "Cable Reverse Fly", w1: "10kg", w2: "16kg", sets: "3 sets × 15 reps", note: "Cross cables, pull in a wide arc." },
+              { reg: "Core (Bodyweight)", name: "Hanging Knee Raise", w1: "BW", w2: "15 reps", sets: "3 sets × 12 reps", note: "Third new compound. Controlled, no swinging from the shoulders." },
+              { reg: "Core", name: "Weighted Plank", w1: "15kg", w2: "25kg", sets: "3 sets × 45s", note: "Plate on the upper back, straight line hips to shoulders." }
+            ]
+          },
+          {
+            id: "day4", title: "DAY 4", meta: "Chest + Biceps + Forearms", exercises: [
+              { reg: "Upper Chest", name: "Incline Barbell Press", w1: "25kg", w2: "35kg", sets: "3 sets × 8 reps", note: "Second barbell session of the week — same bar, lighter than the flat press." },
+              { reg: "Mid Chest", name: "Machine Chest Press", w1: "40kg", w2: "55kg", sets: "3 sets × 10 reps", note: "Joint-friendly volume day — push closer to failure here." },
+              { reg: "Lower Chest", name: "Cable Crossover", w1: "14kg", w2: "26kg", sets: "3 sets × 15 reps", note: "Squeeze and hold for a second at the bottom." },
+              { reg: "Biceps", name: "Incline Dumbbell Curl", w1: "10kg", w2: "15kg", sets: "3 sets × 10 reps", note: "Full stretch at the bottom, no shoulder swing." },
+              { reg: "Forearm", name: "Behind-Back Wrist Curl", w1: "22kg", w2: "32kg", sets: "3 sets × 15 reps", note: "Heavy flexor work." }
+            ]
+          },
+          {
+            id: "day5", title: "DAY 5", meta: "Back + Triceps", exercises: [
+              { reg: "Lats", name: "Wide-Grip Lat Pulldown", w1: "45kg", w2: "65kg", sets: "3 sets × 10 reps", note: "Pull to upper chest, chest tall throughout." },
+              { reg: "Mid Back", name: "T-Bar Row (Machine)", w1: "35kg", w2: "50kg", sets: "3 sets × 8 reps", note: "Chest supported, squeeze hard at the top." },
+              { reg: "Triceps (Bodyweight)", name: "Weighted Dip", w1: "BW", w2: "Plate", sets: "3 sets × 10 reps", note: "Fourth new compound. Controlled depth, elbows tucked rather than flared wide." },
+              { reg: "Triceps", name: "Skullcrushers", w1: "18kg", w2: "28kg", sets: "3 sets × 8 reps", note: "EZ bar, elbows fixed in place." },
+              { reg: "Lower Back", name: "Back Extension", w1: "12kg", w2: "18kg", sets: "2 sets × 15 reps", note: "Targeting the erectors — don't hyperextend at the top." }
+            ]
+          },
+          {
+            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+              { reg: "Front Delt", name: "Seated DB Shoulder Press", w1: "16kg", w2: "22kg", sets: "3 sets × 8 reps", note: "Lower reps than earlier phases — this block leans toward strength." },
+              { reg: "Side Delt", name: "Cable Lateral Raise", w1: "8kg", w2: "12kg", sets: "3 sets × 15 reps", note: "Constant tension, each arm separately." },
+              { reg: "Core", name: "Pallof Press", w1: "22kg", w2: "32kg", sets: "3 sets × 12 reps", note: "Press straight out and hold — resist any twist." },
+              { reg: "Core", name: "Hollow Body Hold", w1: "40s", w2: "70s", sets: "3 sets", note: "Gymnastic core strength — lower back pinned to the floor." },
+              { reg: "Cardio", name: "Incline Treadmill Walk", w1: "Lvl 2", w2: "Lvl 5", sets: "20 mins", note: "Kept as a steady walk on purpose — recovery is a stated priority this phase, not an all-out finisher." }
             ]
           }
         ]
