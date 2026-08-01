@@ -406,6 +406,96 @@
       font-weight: 700;
     }
 
+    /* ===== DAY QUEUE PILLS (checkable, reorder-on-complete) ===== */
+    .nav a.day-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      will-change: transform;
+    }
+
+    .nav a.day-pill .custom-check {
+      width: 14px;
+      height: 14px;
+      border-width: 1.5px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .nav a.day-pill .custom-check::after {
+      font-size: 9px;
+    }
+
+    .nav a.day-pill.done {
+      color: var(--teal);
+      background: rgba(79, 140, 138, 0.1);
+    }
+
+    .nav a.day-pill.done .custom-check {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .nav a.day-pill.done .custom-check::after {
+      content: "✓";
+      color: var(--bg);
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .nav a.day-pill.done.active {
+      background: var(--teal);
+      color: var(--bg);
+    }
+
+    @keyframes checkPop {
+      0% {
+        transform: scale(0.5);
+      }
+
+      55% {
+        transform: scale(1.35);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes pillFlash {
+      0% {
+        background: rgba(79, 140, 138, 0.55);
+      }
+
+      100% {
+        background: rgba(79, 140, 138, 0.1);
+      }
+    }
+
+    .nav a.day-pill.just-completed {
+      animation: pillFlash 0.7s ease-out;
+    }
+
+    .nav a.day-pill.just-completed .custom-check {
+      animation: checkPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .day-status {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 8px 24px 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .day-status b {
+      color: var(--rust);
+      font-weight: 700;
+    }
+
     /* ===== SECTION SHELL ===== */
     section {
       padding: 64px 24px;
@@ -614,18 +704,18 @@
 
     /* Animations */
     .fade-in {
-      animation: fadeIn 0.4s ease-out forwards;
+      animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(10px) scale(0.985);
       }
 
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
@@ -702,15 +792,10 @@
     </div>
   </div>
 
+  <p class="day-status" id="dayStatus"></p>
   <nav class="nav">
     <div class="nav-scroll" id="navScroll">
-      <a href="#day1">Day 1</a>
-      <a href="#day2">Day 2</a>
-      <a href="#day3">Day 3</a>
-      <a href="#day4">Day 4</a>
-      <a href="#day5">Day 5</a>
-      <a href="#day6">Day 6</a>
-      <a href="#legs">Leg Day</a>
+      <!-- JS renders Day 1-6 as checkable, reordering pills here, followed by the static Leg Day link -->
     </div>
   </nav>
 
@@ -867,6 +952,153 @@
       }, 3500);
     }
 
+    // --- DAY QUEUE ENGINE (per-week Day 1-6 checklist that reorders on completion) ---
+    // Does NOT touch planData / workout content in any way — purely a completion tracker
+    // that sits on top of the existing Week/Phase system above.
+    const DAY_QUEUE_KEY = 'rebuild_day_queue_v1';
+    const DAY_LABELS = { day1: "Day 1", day2: "Day 2", day3: "Day 3", day4: "Day 4", day5: "Day 5", day6: "Day 6" };
+    let dayQueue = ["day1", "day2", "day3", "day4", "day5", "day6"];
+    let doneDays = [];
+
+    try {
+      const savedQueue = localStorage.getItem(DAY_QUEUE_KEY);
+      if (savedQueue) {
+        const parsed = JSON.parse(savedQueue);
+        if (Array.isArray(parsed.dayQueue) && parsed.dayQueue.length === 6) dayQueue = parsed.dayQueue;
+        if (Array.isArray(parsed.doneDays)) doneDays = parsed.doneDays;
+      }
+    } catch (e) {
+      console.error("Local storage error:", e);
+    }
+
+    function saveDayQueue() {
+      try {
+        localStorage.setItem(DAY_QUEUE_KEY, JSON.stringify({ dayQueue, doneDays }));
+      } catch (e) {
+        console.error("Could not save to local storage", e);
+      }
+    }
+
+    function currentWeekIndex() {
+      return progressState.findIndex(v => !v); // -1 once all 16 weeks are done
+    }
+
+    function renderDayNav(justCompletedId) {
+      const container = document.getElementById('navScroll');
+
+      // FLIP: capture current positions before rebuilding the list
+      const prevRects = new Map();
+      container.querySelectorAll('a.day-pill').forEach(el => {
+        prevRects.set(el.getAttribute('href'), el.getBoundingClientRect());
+      });
+
+      container.innerHTML = '';
+
+      dayQueue.forEach(id => {
+        const isDone = doneDays.includes(id);
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.className = `day-pill ${isDone ? 'done' : ''} ${id === justCompletedId ? 'just-completed' : ''}`;
+        a.innerHTML = `<span class="custom-check"></span>${DAY_LABELS[id]}`;
+        a.addEventListener('click', () => toggleDay(id));
+        container.appendChild(a);
+      });
+
+      const legsLink = document.createElement('a');
+      legsLink.href = '#legs';
+      legsLink.textContent = 'Leg Day';
+      container.appendChild(legsLink);
+
+      // FLIP: animate from old position to new position
+      container.querySelectorAll('a.day-pill').forEach(el => {
+        const prev = prevRects.get(el.getAttribute('href'));
+        if (!prev) return;
+        const next = el.getBoundingClientRect();
+        const dx = prev.left - next.left;
+        if (Math.abs(dx) > 1) {
+          el.style.transition = 'none';
+          el.style.transform = `translateX(${dx}px)`;
+          requestAnimationFrame(() => {
+            el.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            el.style.transform = '';
+          });
+        }
+      });
+
+      // Status line: which week we're on and what's up next in the queue
+      const statusEl = document.getElementById('dayStatus');
+      const wIdx = currentWeekIndex();
+      if (wIdx === -1) {
+        statusEl.innerHTML = `<b>16-Week Program Complete 🏆</b>`;
+      } else {
+        const dayNum = Math.min(doneDays.length + 1, 6);
+        const nextLabel = DAY_LABELS[dayQueue[0]] || '—';
+        statusEl.innerHTML = `Currently <b>Week ${wIdx + 1}</b> · ${dayNum} of 6 this week · Next up: <b>${nextLabel}</b>`;
+      }
+
+      initScrollSpy();
+    }
+
+    function toggleDay(id) {
+      const isDone = doneDays.includes(id);
+      let justCompletedId = null;
+
+      if (isDone) {
+        // Undo a mis-click: un-mark it and bring it back to the front of the queue
+        doneDays = doneDays.filter(d => d !== id);
+        dayQueue = [id, ...dayQueue.filter(d => d !== id)];
+      } else {
+        // Mark complete and rotate it to the back of the queue
+        doneDays.push(id);
+        dayQueue = [...dayQueue.filter(d => d !== id), id];
+        justCompletedId = id;
+
+        if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+
+        if (doneDays.length === 6) {
+          advanceWeek(); // resets dayQueue/doneDays internally — nav rebuilds fresh, so skip the flash below
+          justCompletedId = null;
+        }
+      }
+
+      saveDayQueue();
+      renderDayNav(justCompletedId);
+    }
+
+    function advanceWeek() {
+      const idx = currentWeekIndex();
+
+      // Reset the queue for the fresh week regardless
+      dayQueue = ["day1", "day2", "day3", "day4", "day5", "day6"];
+      doneDays = [];
+
+      if (idx === -1) return; // all 16 weeks already complete, nothing left to mark
+
+      progressState[idx] = true;
+      saveProgress();
+
+      const phaseNum = Math.floor(idx / 4); // 0-indexed
+      const phaseIndices = phasesDef[phaseNum].weekIndices;
+      const phaseJustCompleted = phaseIndices.every(i => progressState[i]);
+      const nextPhase = phasesDef[phaseNum + 1];
+
+      renderTracker();
+
+      let msg;
+      if (phaseJustCompleted && nextPhase) {
+        activePhaseId = nextPhase.id;
+        renderPhaseTabs();
+        renderPhase(activePhaseId); // smooth fade-in swap to the new phase's content
+        msg = `Phase ${phaseNum + 1} Complete — Phase ${phaseNum + 2} Unlocked!`;
+      } else if (phaseJustCompleted) {
+        msg = `Phase ${phaseNum + 1} Complete — 16-Week Program Finished! 🏆`;
+      } else {
+        const nextWeek = idx + 2;
+        msg = `Week ${idx + 1} Complete — Week ${nextWeek} Next!`;
+      }
+      showToast(msg, true);
+    }
+
     // --- 16-WEEK PROGRESSION DATA ENGINE ---
     // Zero pushups, zero pullups, heavy focus on hypertrophy, cables, and machine safety.
     const planData = {
@@ -892,12 +1124,12 @@
             ]
           },
           {
-            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+            id: "day3", title: "DAY 3", meta: "Shoulders + Arms", exercises: [
               { reg: "Front Delt", name: "Arnold Press", w1: "8kg", w2: "14kg", sets: "3 sets × 10 reps", note: "Twist at bottom increases range of motion." },
               { reg: "Side Delt", name: "Lean-Away Cable Lateral", w1: "5kg", w2: "10kg", sets: "3 sets × 12 reps", note: "Hold a pole, lean out to increase tension arc." },
               { reg: "Rear Delt", name: "High-Angle Rope Row", w1: "15kg", w2: "25kg", sets: "3 sets × 12 reps", note: "Pull to neck level, flare elbows." },
-              { reg: "Core", name: "Weighted Plank", w1: "BW", w2: "10kg", sets: "3 sets × 45s", note: "Add a plate to your back." },
-              { reg: "Core", name: "Dead Bug", w1: "BW", w2: "20 reps", sets: "3 sets × 12 reps", note: "Opposite arm/leg extension on back." }
+              { reg: "Biceps", name: "Standing Cable Curl (Bar)", w1: "12kg", w2: "22kg", sets: "3 sets × 12 reps", note: "Constant tension, elbows pinned to sides." },
+              { reg: "Triceps", name: "Machine Tricep Dip", w1: "20kg", w2: "35kg", sets: "3 sets × 10 reps", note: "Resistance machine, controlled depth top to bottom." }
             ]
           },
           {
@@ -919,12 +1151,12 @@
             ]
           },
           {
-            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+            id: "day6", title: "DAY 6", meta: "Shoulders + Arms", exercises: [
               { reg: "Front Delt", name: "Machine Shoulder Press", w1: "15kg", w2: "30kg", sets: "3 sets × 10 reps", note: "Allows for maximum safe loading." },
               { reg: "Side Delt", name: "Heavy DB Lateral Raise", w1: "6kg", w2: "12kg", sets: "4 sets × 10 reps", note: "Slight cheat is okay on last reps this phase." },
               { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "15kg", w2: "25kg", sets: "3 sets × 15 reps", note: "Squeeze shoulder blades together." },
-              { reg: "Core", name: "Cable Woodchoppers", w1: "10kg", w2: "20kg", sets: "3 sets × 12 reps", note: "High to low rotational control." },
-              { reg: "Core", name: "Hollow Body Hold", w1: "20s", w2: "45s", sets: "3 sets × to target", note: "Lower back pressed hard into floor." }
+              { reg: "Biceps", name: "Concentration Curl", w1: "6kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Seated, elbow braced on thigh — pure isolation." },
+              { reg: "Triceps", name: "Single-Arm Overhead DB Extension", w1: "6kg", w2: "12kg", sets: "3 sets × 12 reps", note: "Full stretch behind the head, elbow tucked in." }
             ]
           }
         ]
@@ -951,12 +1183,12 @@
             ]
           },
           {
-            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+            id: "day3", title: "DAY 3", meta: "Shoulders + Arms", exercises: [
               { reg: "Side Delt", name: "DB Lateral Raise", w1: "5kg", w2: "10kg", sets: "4 sets × 15 reps", note: "Pre-exhaust side delts." },
               { reg: "Front Delt", name: "Seated DB Press", w1: "10kg", w2: "16kg", sets: "3 sets × 8 reps", note: "Heavy press." },
               { reg: "Rear Delt", name: "Bent-Over Cable Fly", w1: "5kg", w2: "10kg", sets: "3 sets × 15 reps", note: "Cables give constant tension." },
-              { reg: "Core", name: "Pallof Press", w1: "15kg", w2: "25kg", sets: "3 sets × 12 reps", note: "Resist rotation." },
-              { reg: "Core", name: "Plank with Taps", w1: "10 reps", w2: "20 reps", sets: "3 sets", note: "Keep hips entirely still." }
+              { reg: "Biceps", name: "Cable Curl (Rope)", w1: "10kg", w2: "18kg", sets: "3 sets × 15 reps", note: "Pre-exhaust the biceps, rope allows a natural twist at the top." },
+              { reg: "Triceps", name: "Single-Arm Overhead Cable Ext", w1: "6kg", w2: "14kg", sets: "3 sets × 15 reps", note: "Isolate each arm, full stretch at the bottom." }
             ]
           },
           {
@@ -978,12 +1210,12 @@
             ]
           },
           {
-            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+            id: "day6", title: "DAY 6", meta: "Shoulders + Arms", exercises: [
               { reg: "Side Delt", name: "Cable Lateral Raise", w1: "5kg", w2: "12kg", sets: "4 sets × 12 reps", note: "Behind the back variation." },
               { reg: "Front Delt", name: "Machine Press", w1: "20kg", w2: "35kg", sets: "3 sets × 8 reps", note: "Heavy finishing press." },
               { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "20kg", w2: "30kg", sets: "3 sets × 12 reps", note: "Strict form." },
-              { reg: "Core", name: "Side Plank", w1: "30s", w2: "60s", sets: "3 sets", note: "Weighted if possible." },
-              { reg: "Core", name: "Bird Dog", w1: "15 reps", w2: "25 reps", sets: "3 sets", note: "Perfect stability." }
+              { reg: "Biceps", name: "Spider Curl (Incline Bench)", w1: "8kg", w2: "16kg", sets: "3 sets × 12 reps", note: "Chest against the bench, strict peak squeeze." },
+              { reg: "Triceps", name: "Cable Kickback", w1: "5kg", w2: "10kg", sets: "3 sets × 15 reps", note: "Hinge forward, extend straight back and squeeze." }
             ]
           }
         ]
@@ -1010,12 +1242,12 @@
             ]
           },
           {
-            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+            id: "day3", title: "DAY 3", meta: "Shoulders + Arms", exercises: [
               { reg: "Shoulders", name: "DB Lateral + DB Front Raise", w1: "8kg", w2: "12kg", sets: "3 sets × 10/10 reps", note: "Superset. Cap the delts." },
               { reg: "Front Delt", name: "Smith Machine Press", w1: "15kg", w2: "25kg", sets: "3 sets × 8 reps", note: "Heavy." },
               { reg: "Rear Delt", name: "Reverse Pec Deck", w1: "25kg", w2: "35kg", sets: "3 sets × 12 reps", note: "Squeeze." },
-              { reg: "Core", name: "Weighted Plank", w1: "10kg", w2: "20kg", sets: "3 sets × 45s", note: "Heavy static hold." },
-              { reg: "Core", name: "Dead Bug", w1: "20 reps", w2: "30 reps", sets: "3 sets", note: "Core control." }
+              { reg: "Biceps", name: "Cable Curl + Concentration Curl", w1: "12/6kg", w2: "20/10kg", sets: "3 sets × 10/10 reps", note: "Superset. Cable curl straight into a slow concentration finisher." },
+              { reg: "Triceps", name: "Overhead Rope Ext + Pushdown", w1: "15kg", w2: "25kg", sets: "3 sets × 10/10 reps", note: "Superset. Same rope, two angles back-to-back." }
             ]
           },
           {
@@ -1037,11 +1269,11 @@
             ]
           },
           {
-            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+            id: "day6", title: "DAY 6", meta: "Shoulders + Arms", exercises: [
               { reg: "Shoulders", name: "Machine Press + Lat Raise", w1: "30/6kg", w2: "45/10kg", sets: "3 sets × 8/12 reps", note: "Superset. Final boulder shoulder push." },
               { reg: "Rear Delt", name: "Bent-Over Cable Fly", w1: "8kg", w2: "15kg", sets: "3 sets × 15 reps", note: "High volume." },
-              { reg: "Core", name: "Pallof Press", w1: "20kg", w2: "30kg", sets: "3 sets × 12 reps", note: "Anti-rotation." },
-              { reg: "Core", name: "Hollow Body Hold", w1: "30s", w2: "60s", sets: "3 sets", note: "Gymnastic core strength." },
+              { reg: "Biceps", name: "21s Bicep Curl", w1: "8kg", w2: "14kg", sets: "3 sets × 21 reps", note: "7 bottom-half + 7 top-half + 7 full reps. Brutal pump finisher." },
+              { reg: "Triceps", name: "Diamond Push-Up + Pushdown", w1: "BW", w2: "15kg", sets: "3 sets × 12/12 reps", note: "Superset. Bodyweight burnout into a cable finisher." },
               { reg: "Cardio", name: "Incline Treadmill Sprints", w1: "Lvl 1", w2: "Lvl 5", sets: "15 mins", note: "Finish strong." }
             ]
           }
@@ -1069,12 +1301,12 @@
             ]
           },
           {
-            id: "day3", title: "DAY 3", meta: "Shoulders + Core", exercises: [
+            id: "day3", title: "DAY 3", meta: "Shoulders + Arms", exercises: [
               { reg: "Front Delt", name: "Standing Barbell Overhead Press", w1: "22kg", w2: "32kg", sets: "4 sets × 6 reps", note: "Brace your core hard, press straight overhead — not forward." },
               { reg: "Side Delt", name: "DB Lateral Raise", w1: "10kg", w2: "14kg", sets: "3 sets × 15 reps", note: "Lead with elbows, no swinging." },
               { reg: "Rear Delt", name: "Cable Reverse Fly", w1: "10kg", w2: "16kg", sets: "3 sets × 15 reps", note: "Cross cables, pull in a wide arc." },
-              { reg: "Core (Bodyweight)", name: "Hanging Knee Raise", w1: "BW", w2: "15 reps", sets: "3 sets × 12 reps", note: "Third new compound. Controlled, no swinging from the shoulders." },
-              { reg: "Core", name: "Weighted Plank", w1: "15kg", w2: "25kg", sets: "3 sets × 45s", note: "Plate on the upper back, straight line hips to shoulders." }
+              { reg: "Biceps", name: "EZ-Bar Curl", w1: "20kg", w2: "30kg", sets: "3 sets × 8 reps", note: "Heavy strength-phase curl, strict form, no swinging." },
+              { reg: "Triceps", name: "Seated Overhead DB Extension", w1: "10kg", w2: "18kg", sets: "3 sets × 10 reps", note: "Both hands on one dumbbell, full stretch behind the head." }
             ]
           },
           {
@@ -1096,11 +1328,11 @@
             ]
           },
           {
-            id: "day6", title: "DAY 6", meta: "Shoulders + Core", exercises: [
+            id: "day6", title: "DAY 6", meta: "Shoulders + Arms", exercises: [
               { reg: "Front Delt", name: "Seated DB Shoulder Press", w1: "16kg", w2: "22kg", sets: "3 sets × 8 reps", note: "Lower reps than earlier phases — this block leans toward strength." },
               { reg: "Side Delt", name: "Cable Lateral Raise", w1: "8kg", w2: "12kg", sets: "3 sets × 15 reps", note: "Constant tension, each arm separately." },
-              { reg: "Core", name: "Pallof Press", w1: "22kg", w2: "32kg", sets: "3 sets × 12 reps", note: "Press straight out and hold — resist any twist." },
-              { reg: "Core", name: "Hollow Body Hold", w1: "40s", w2: "70s", sets: "3 sets", note: "Gymnastic core strength — lower back pinned to the floor." },
+              { reg: "Biceps", name: "Hammer Curl", w1: "10kg", w2: "16kg", sets: "3 sets × 10 reps", note: "Neutral grip — hits the brachialis for arm thickness." },
+              { reg: "Triceps", name: "Rope Pushdown", w1: "15kg", w2: "25kg", sets: "3 sets × 12 reps", note: "Full lockout, elbows pinned to your sides." },
               { reg: "Cardio", name: "Incline Treadmill Walk", w1: "Lvl 2", w2: "Lvl 5", sets: "20 mins", note: "Kept as a steady walk on purpose — recovery is a stated priority this phase, not an all-out finisher." }
             ]
           }
@@ -1188,7 +1420,9 @@
       initScrollSpy();
     }
 
+    let scrollSpyObserver;
     function initScrollSpy() {
+      if (scrollSpyObserver) scrollSpyObserver.disconnect();
       const links = document.querySelectorAll('.nav a');
       const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
       const io = new IntersectionObserver((entries) => {
@@ -1202,11 +1436,13 @@
         });
       }, { rootMargin: '-45% 0px -50% 0px' });
       sections.forEach(s => { if (s) io.observe(s); });
+      scrollSpyObserver = io;
     }
 
     // Run Initialization
     renderTracker();
     renderPhase(activePhaseId);
+    renderDayNav();
   </script>
 </body>
 
